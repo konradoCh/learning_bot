@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class Responder extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
-
+        System.out.println(update.getMessage().getText());
     }
 
     @Override
