@@ -23,6 +23,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation group: 'org.telegram', name: 'telegrambots-spring-boot-starter', version: '6.9.7.1'
 
+    implementation 'org.mongodb:mongodb-driver-sync:4.7.0'
+
+
     //implementation 'org.telegram:telegrambots-abilities:5.0.0'
 
     compileOnly 'org.projectlombok:lombok'

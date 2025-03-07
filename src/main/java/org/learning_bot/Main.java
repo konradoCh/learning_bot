@@ -15,5 +15,7 @@ public class Main {
         } catch (TelegramApiException telegramApiException) {
             telegramApiException.printStackTrace();
         }
+
+        MongoDB.connectToDatabase();
     }
 }
