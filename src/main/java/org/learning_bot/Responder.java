@@ -2,7 +2,6 @@ package org.learning_bot;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Contact;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -18,12 +17,14 @@ import java.util.List;
 
 public class Responder extends TelegramLongPollingBot {
 
+    public Responder(String botToken) {
+        super(botToken);
+    }
+
     @Override
     public synchronized void onUpdateReceived(Update update) {
 
         try {
-
-
             String response = "I am sorry, I don't understand the message you sent";
 
             String chatId = "";
@@ -46,15 +47,22 @@ public class Responder extends TelegramLongPollingBot {
                 }
             }
 
-
             if (update.hasMessage()) {
                 chatId = update.getMessage().getChatId().toString();
+
+                boolean userExists = MongoDB.userExists(chatId);
+
+                MongoDB.insertNewUserId(chatId);
 
                 if (update.getMessage().hasText()) {
                     String userMessage = update.getMessage().getText().trim();
 
                     if (userMessage.equalsIgnoreCase("Hello")) {
-                        sendMessage.setText("How are you? \uD83D\uDE00");
+                        if (userExists) {
+                            sendMessage.setText("Hello again! How are you?");
+                        } else {
+                            sendMessage.setText("How are you? \uD83D\uDE00");
+                        }
                     }
 
                     if (userMessage.equalsIgnoreCase("How are you?")) {
@@ -139,30 +147,22 @@ public class Responder extends TelegramLongPollingBot {
                 }
             }
 
-
             if (chatId.isEmpty()) {
                 throw new IllegalStateException("The chat ID couldn't be identified or found");
             }
 
             sendMessage.setChatId(chatId);
-
-
-                sendApiMethod(sendMessage);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            } catch (Exception exception) {
-                //Execute logic to handle generic exceptions
-                exception.printStackTrace();
-            }
+            sendApiMethod(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        } catch (Exception exception) {
+            //Execute logic to handle generic exceptions
+            exception.printStackTrace();
+        }
     }
 
     @Override
     public String getBotUsername() {
         return Bot.USERNAME;
-    }
-
-    @Override
-    public String getBotToken() {
-        return Bot.BOT_TOKEN;
     }
 }
